@@ -1,0 +1,21 @@
+{
+  "name": "Bookmark Cleanup",
+  "version": "0.1",
+  "description": "Cleanup your bookmarks.",
+  "permissions": [
+    "bookmarks",
+    "tabs",
+    "http://*/",
+    "https://*/"
+  ],
+  "browser_action": {
+      "default_title": "Bookmark Cleanup",
+      "default_icon": "icon.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
+}
