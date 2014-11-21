@@ -96,6 +96,7 @@ $(document).ready(function(){
 
 function getBookmarks(){
 
+  if ( typeof(chrome.bookmarks) === "undefined" ) return [];
     chrome.bookmarks.getTree(function(r)
     {   var arrayLength = r.length;
         // console.log(arrayLength);
