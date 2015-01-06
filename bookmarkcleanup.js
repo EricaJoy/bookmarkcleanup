@@ -8,6 +8,10 @@ noQuery = {
   }
 }
 
+function Bookmark(data) {
+  noQuery.extend(this, data);
+};
+
 // Get all the bookmarks
 $(document).ready(function(){
 
@@ -149,7 +153,7 @@ function treeWalk(obj) {
         // Test to make sure its not a "special" bookmark.
         if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
         // Beginning the code for async
-        bookmarksArray.push(obj)
+        bookmarksArray.push(new Bookmark(obj))
  
             }
         }

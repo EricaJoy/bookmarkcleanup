@@ -7,3 +7,9 @@ describe("noQuery helper singleton", function() {
     expect(gaining.foo).toEqual("bar");
   });
 });
+
+describe("Bookmark", function() {
+  it("class exists", function() {
+    expect(Bookmark).not.toBe(null);
+  });
+});
