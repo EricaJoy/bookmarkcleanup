@@ -1,3 +1,12 @@
+noQuery = {
+  extend: function(recipient, source) {
+    for (var key in source) {
+      if(source.hasOwnProperty(key)){
+        recipient[key] = source[key];
+      }
+    }
+  }
+}
 
 // Get all the bookmarks
 $(document).ready(function(){
