@@ -161,30 +161,30 @@ function treeWalk(obj) {
     }
 
 
-    function urlTesting(obj) {
+    function urlTesting(bookmark) {
       var template = function(code) {
         return [
           '<tr id=',
-          obj.id,
+          bookmark.id,
           '><td><a href="',
-          obj.url,
+          bookmark.url,
           '"> ',
-          obj.title,
+          bookmark.title,
           ' </a> </td><td name="status">',
           code,
           '</td><td class="checkbox"><input type="checkbox" parentId="',
-          obj.parentId,
+          bookmark.parentId,
           '" status="',
           code,
           '" name="selected" value="',
-          obj.id,
+          bookmark.id,
           '"></td></tr>';
         ].join('');
       }
 
-      $.ajax({ url: obj.url })
+      $.ajax({ url: bookmark.url })
       .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-        $('#'+obj.parentId)
+        $('#'+bookmark.parentId)
           .after(template(potentialStatusBearer1.status || potentialStatusBearer2.status));
       });
     }
