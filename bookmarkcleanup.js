@@ -162,11 +162,12 @@ function treeWalk(obj) {
 
 
     function urlTesting(obj) {
+      var template = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>';
+
       var statusCodeMap = {
         0: function() {
           var code = 0;
-          var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-          $('#'+obj.parentId).after(row);
+          $('#'+obj.parentId).after(template);
         },
 
         200: function() {
