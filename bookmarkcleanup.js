@@ -161,54 +161,53 @@ function treeWalk(obj) {
     }
 
 
-function urlTesting(obj) {
+    function urlTesting(obj) {
+      $.ajax({
+        url: obj.url,
+        type: 'GET',
+        statusCode: {
 
-        $.ajax({
-            url: obj.url,
-            type: 'GET',
-            statusCode: {
-            
-            0: function() {
-              var code = 0;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
+          0: function() {
+            var code = 0;
+            var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
             $('#'+obj.parentId).after(row);
-            },
+          },
 
-            403: function() {
-              var code = 403;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
+          403: function() {
+            var code = 403;
+            var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
             $('#'+obj.parentId).after(row);
-            },
+          },
 
 
-            404: function() {
-              var code = 404;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
+          404: function() {
+            var code = 404;
+            var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
             $('#'+obj.parentId).after(row);
-            },
+          },
 
-            503: function() {
-              var code = 503;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
+          503: function() {
+            var code = 503;
+            var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
             $('#'+obj.parentId).after(row);
-            },
+          },
 
-            408: function() {
-              var code = 408;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
+          408: function() {
+            var code = 408;
+            var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
             $('#'+obj.parentId).after(row);
-            },
+          },
 
-            500: function() {
-              var code = 500;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
+          500: function() {
+            var code = 500;
+            var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
             $('#'+obj.parentId).after(row);
-            },
+          },
 
-          }
+        }
 
-        });
-}
+      });
+    }
 
 
 
