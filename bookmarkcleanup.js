@@ -134,7 +134,9 @@ function treeWalk(obj) {
                 //Do some stuff with the current bookmarksArray
                 console.log (bookmarksArray)
                     for (var i=0; i < bookmarksArray.length; i++) {
-                        urlTesting(bookmarksArray[i]);
+                        urlTesting(bookmarksArray[i], function(bookmark, template) {
+                          $('#'+bookmark.parentId).after(template);
+                        });
                     }
                 // Empty out the bookmarksArray array
                 bookmarksArray = []
@@ -161,7 +163,7 @@ function treeWalk(obj) {
     }
 
 
-    function urlTesting(bookmark) {
+    function urlTesting(bookmark, callback) {
       var template = function(code) {
         return [
           '<tr id=',
@@ -184,8 +186,7 @@ function treeWalk(obj) {
 
       $.ajax({ url: bookmark.url })
       .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-        $('#'+bookmark.parentId)
-          .after(template(potentialStatusBearer1.status || potentialStatusBearer2.status));
+        callback(bookmark, template(potentialStatusBearer1.status || potentialStatusBearer2.status))
       });
     }
 
