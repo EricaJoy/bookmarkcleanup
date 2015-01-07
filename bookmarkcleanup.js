@@ -33,10 +33,10 @@ Bookmark.prototype = {
     ].join('');
   },
 
-  urlTesting: function(callback) {
-    $.ajax({ url: this.url })
+  urlTesting: function() {
+    return $.ajax({ url: this.url })
     .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-      callback(this.toHtml.call(this, (potentialStatusBearer1.status || potentialStatusBearer2.status)))
+      this.status = (potentialStatusBearer1.status || potentialStatusBearer2.status);
     }.bind(this));
   }
 };
@@ -163,8 +163,10 @@ function treeWalk(obj) {
                 //Do some stuff with the current bookmarksArray
                 console.log (bookmarksArray)
                     for (var i=0; i < bookmarksArray.length; i++) {
-                        urlTesting(bookmarksArray[i], function(bookmark, template) {
-                          $('#'+bookmark.parentId).after(template);
+                      var bookmark = bookmarksArray[i];
+                      bookmark.urlTesting()
+                        .always(function(template) {
+                          $('#'+bookmark.parentId).after(bookmark.toHtml());
                         });
                     }
                 // Empty out the bookmarksArray array
