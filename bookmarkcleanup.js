@@ -10,10 +10,29 @@ noQuery = {
 
 function Bookmark(data) {
   noQuery.extend(this, data);
+
+  this.statusCode = null;
+  this._toHtmlDeferred = $.Deferred();
+  this.determineHttpStatus();
 };
 
 Bookmark.prototype = {
-  toHtml: function(code) {
+  toHtml: function(callback) {
+    this._toHtmlDeferred.always(function() {
+      callback(this._template());
+    }.bind(this))
+    return this._toHtmlDeferred;
+  },
+
+  determineHttpStatus: function() {
+    this.statusDeferred = $.ajax({ url: this.url })
+    .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
+      this.statusCode = (potentialStatusBearer1.status || potentialStatusBearer2.status);
+      this._toHtmlDeferred.resolve();
+    }.bind(this));
+  },
+
+  _template: function() {
     return [
       '<tr id=',
       this.id,
@@ -22,22 +41,15 @@ Bookmark.prototype = {
       '"> ',
       this.title,
       ' </a> </td><td name="status">',
-      code,
+      this.statusCode,
       '</td><td class="checkbox"><input type="checkbox" parentId="',
       this.parentId,
       '" status="',
-      code,
+      this.statusCode,
       '" name="selected" value="',
       this.id,
       '"></td></tr>'
     ].join('');
-  },
-
-  determineHttpStatus: function() {
-    return $.ajax({ url: this.url })
-    .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-      this.status = (potentialStatusBearer1.status || potentialStatusBearer2.status);
-    }.bind(this));
   }
 };
 
@@ -164,10 +176,9 @@ function treeWalk(obj) {
                 console.log (bookmarksArray)
                     for (var i=0; i < bookmarksArray.length; i++) {
                       var bookmark = bookmarksArray[i];
-                      bookmark.determineHttpStatus()
-                        .always(function(template) {
-                          $('#'+bookmark.parentId).after(bookmark.toHtml());
-                        });
+                      bookmark.toHtml(function(bookmarkHtml) {
+                        $('#'+bookmark.parentId).after(bookmarkHtml);
+                      });
                     }
                 // Empty out the bookmarksArray array
                 bookmarksArray = []
