@@ -33,7 +33,7 @@ Bookmark.prototype = {
     ].join('');
   },
 
-  urlTesting: function() {
+  determineHttpStatus: function() {
     return $.ajax({ url: this.url })
     .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
       this.status = (potentialStatusBearer1.status || potentialStatusBearer2.status);
@@ -164,7 +164,7 @@ function treeWalk(obj) {
                 console.log (bookmarksArray)
                     for (var i=0; i < bookmarksArray.length; i++) {
                       var bookmark = bookmarksArray[i];
-                      bookmark.urlTesting()
+                      bookmark.determineHttpStatus()
                         .always(function(template) {
                           $('#'+bookmark.parentId).after(bookmark.toHtml());
                         });
