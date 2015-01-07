@@ -13,30 +13,30 @@ function Bookmark(data) {
 };
 
 Bookmark.prototype = {
-  urlTesting: function(callback) {
-    var template = function(code) {
-      return [
-        '<tr id=',
-        this.id,
-        '><td><a href="',
-        this.url,
-        '"> ',
-        this.title,
-        ' </a> </td><td name="status">',
-        code,
-        '</td><td class="checkbox"><input type="checkbox" parentId="',
-        this.parentId,
-        '" status="',
-        code,
-        '" name="selected" value="',
-        this.id,
-        '"></td></tr>'
-      ].join('');
-    }
+  toHtml: function(code) {
+    return [
+      '<tr id=',
+      this.id,
+      '><td><a href="',
+      this.url,
+      '"> ',
+      this.title,
+      ' </a> </td><td name="status">',
+      code,
+      '</td><td class="checkbox"><input type="checkbox" parentId="',
+      this.parentId,
+      '" status="',
+      code,
+      '" name="selected" value="',
+      this.id,
+      '"></td></tr>'
+    ].join('');
+  },
 
+  urlTesting: function(callback) {
     $.ajax({ url: this.url })
     .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-      callback(template.call(this, (potentialStatusBearer1.status || potentialStatusBearer2.status)))
+      callback(this.toHtml.call(this, (potentialStatusBearer1.status || potentialStatusBearer2.status)))
     }.bind(this));
   }
 };
