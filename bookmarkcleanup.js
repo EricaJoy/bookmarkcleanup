@@ -12,6 +12,35 @@ function Bookmark(data) {
   noQuery.extend(this, data);
 };
 
+Bookmark.prototype = {
+  urlTesting: function(callback) {
+    var template = function(code) {
+      return [
+        '<tr id=',
+        this.id,
+        '><td><a href="',
+        this.url,
+        '"> ',
+        this.title,
+        ' </a> </td><td name="status">',
+        code,
+        '</td><td class="checkbox"><input type="checkbox" parentId="',
+        this.parentId,
+        '" status="',
+        code,
+        '" name="selected" value="',
+        this.id,
+        '"></td></tr>'
+      ].join('');
+    }
+
+    $.ajax({ url: this.url })
+    .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
+      callback(template.call(this, (potentialStatusBearer1.status || potentialStatusBearer2.status)))
+    }.bind(this));
+  }
+};
+
 // Get all the bookmarks
 $(document).ready(function(){
 
@@ -161,35 +190,3 @@ function treeWalk(obj) {
         }
 
     }
-
-
-    function urlTesting(bookmark, callback) {
-      var template = function(code) {
-        return [
-          '<tr id=',
-          bookmark.id,
-          '><td><a href="',
-          bookmark.url,
-          '"> ',
-          bookmark.title,
-          ' </a> </td><td name="status">',
-          code,
-          '</td><td class="checkbox"><input type="checkbox" parentId="',
-          bookmark.parentId,
-          '" status="',
-          code,
-          '" name="selected" value="',
-          bookmark.id,
-          '"></td></tr>';
-        ].join('');
-      }
-
-      $.ajax({ url: bookmark.url })
-      .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-        callback(bookmark, template(potentialStatusBearer1.status || potentialStatusBearer2.status))
-      });
-    }
-
-
-
-
