@@ -153,6 +153,7 @@ function getBookmarks(){
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
     chrome.bookmarks.getTree(function(r)
     {   var arrayLength = r.length;
+        window.bookmarksArray = [];
         // console.log(arrayLength);
         for (var i=0; i < arrayLength; i++) {
         treeWalk(r[i]);
@@ -167,17 +168,13 @@ function treeWalk(obj) {
     if (obj.title.length > 0){
       $("#bookmarks").append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
 
-      if (typeof bookmarksArray === "undefined") {
-        bookmarksArray = []
-      } else {
-        bookmarksArray.forEach(function(bookmark) {
-          bookmark.toHtml(function(bookmarkHtml) {
-            $('#'+bookmark.parentId).after(bookmarkHtml);
-          });
+      bookmarksArray.forEach(function(bookmark) {
+        bookmark.toHtml(function(bookmarkHtml) {
+          $('#'+bookmark.parentId).after(bookmarkHtml);
         });
-        // Empty out the bookmarksArray array
-        bookmarksArray = []
-      }
+      });
+      // Empty out the bookmarksArray array
+      bookmarksArray = []
 
       obj.children.forEach(function(child) {
         treeWalk(child);
