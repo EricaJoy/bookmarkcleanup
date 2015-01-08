@@ -168,12 +168,9 @@ function treeWalk(obj) {
       $("#bookmarks").append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
 
       if (typeof bookmarksArray === "undefined") {
-        // Make an empty array to hold the bookmarks
         bookmarksArray = []
       }
       else {
-        //Do some stuff with the current bookmarksArray
-        console.log (bookmarksArray)
         for (var i=0; i < bookmarksArray.length; i++) {
           var bookmark = bookmarksArray[i];
           bookmark.toHtml(function(bookmarkHtml) {
@@ -184,11 +181,8 @@ function treeWalk(obj) {
         bookmarksArray = []
       }
 
-      // for each child, do the tree walk
       for (var i=0; i < obj.children.length; i++) {
         treeWalk(obj.children[i]);
-        // console.log(urls)
-
       }
 
 
