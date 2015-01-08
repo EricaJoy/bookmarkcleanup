@@ -163,43 +163,43 @@ function getBookmarks(){
 
 
 function treeWalk(obj) {
-    if (obj.children) {
-        if (obj.title.length > 0){
-            $("#bookmarks").append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
-            
-            if (typeof bookmarksArray === "undefined") {
-                // Make an empty array to hold the bookmarks
-                bookmarksArray = []
-            }
-            else {
-                //Do some stuff with the current bookmarksArray
-                console.log (bookmarksArray)
-                    for (var i=0; i < bookmarksArray.length; i++) {
-                      var bookmark = bookmarksArray[i];
-                      bookmark.toHtml(function(bookmarkHtml) {
-                        $('#'+bookmark.parentId).after(bookmarkHtml);
-                      });
-                    }
-                // Empty out the bookmarksArray array
-                bookmarksArray = []
-            }
-            
-            // for each child, do the tree walk
-            for (var i=0; i < obj.children.length; i++) {
-                treeWalk(obj.children[i]);
-                // console.log(urls)
+  if (obj.children) {
+    if (obj.title.length > 0){
+      $("#bookmarks").append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
 
-            }
-
-        
-    }
-    if (obj['url']) {
-        // Test to make sure its not a "special" bookmark.
-        if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
-        // Beginning the code for async
-        bookmarksArray.push(new Bookmark(obj))
- 
-            }
+      if (typeof bookmarksArray === "undefined") {
+        // Make an empty array to hold the bookmarks
+        bookmarksArray = []
+      }
+      else {
+        //Do some stuff with the current bookmarksArray
+        console.log (bookmarksArray)
+        for (var i=0; i < bookmarksArray.length; i++) {
+          var bookmark = bookmarksArray[i];
+          bookmark.toHtml(function(bookmarkHtml) {
+            $('#'+bookmark.parentId).after(bookmarkHtml);
+          });
         }
+        // Empty out the bookmarksArray array
+        bookmarksArray = []
+      }
+
+      // for each child, do the tree walk
+      for (var i=0; i < obj.children.length; i++) {
+        treeWalk(obj.children[i]);
+        // console.log(urls)
+
+      }
+
+
+  }
+  if (obj['url']) {
+    // Test to make sure its not a "special" bookmark.
+    if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
+      // Beginning the code for async
+      bookmarksArray.push(new Bookmark(obj))
 
     }
+  }
+
+}
