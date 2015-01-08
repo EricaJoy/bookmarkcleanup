@@ -183,8 +183,6 @@ function treeWalk(obj) {
       for (var i=0; i < obj.children.length; i++) {
         treeWalk(obj.children[i]);
       }
-
-
   }
   if (obj['url']) {
     // Test to make sure its not a "special" bookmark.
