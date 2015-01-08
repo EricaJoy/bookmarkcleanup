@@ -170,12 +170,11 @@ function treeWalk(obj) {
       if (typeof bookmarksArray === "undefined") {
         bookmarksArray = []
       } else {
-        for (var i=0; i < bookmarksArray.length; i++) {
-          var bookmark = bookmarksArray[i];
+        bookmarksArray.forEach(function(bookmark) {
           bookmark.toHtml(function(bookmarkHtml) {
             $('#'+bookmark.parentId).after(bookmarkHtml);
           });
-        }
+        });
         // Empty out the bookmarksArray array
         bookmarksArray = []
       }
