@@ -179,9 +179,9 @@ function treeWalk(obj) {
         bookmarksArray = []
       }
 
-      for (var i=0; i < obj.children.length; i++) {
-        treeWalk(obj.children[i]);
-      }
+      obj.children.forEach(function(child) {
+        treeWalk(child);
+      });
   }
   if (obj['url']) {
     // Test to make sure its not a "special" bookmark.
