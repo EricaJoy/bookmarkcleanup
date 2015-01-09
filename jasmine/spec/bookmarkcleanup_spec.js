@@ -111,5 +111,9 @@ describe("Container", function() {
   it("finds all nested containers", function() {
     expect(c.containers().length).toEqual(3);
   });
+
+  it("finds all nested bookmarks", function() {
+    expect(c.bookmarks().length).toEqual(6);
+  });
 });
 

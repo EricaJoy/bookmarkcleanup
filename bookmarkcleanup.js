@@ -178,6 +178,38 @@ Container.prototype = {
     ].join('');
   },
 
+  bookmarks: function() {
+    var accumulator;
+    this._bookmarks(accumulator = []);
+    return this._sanitizeBookmarks(accumulator);
+  },
+
+  bookmarksByAscendingDate: function() {
+    return this.bookmarks().sort(function(a, b) {
+      return b.dateAdded - a.dateAdded;
+    });
+  },
+
+  _sanitizeBookmarks: function(bookmarks) {
+    function isNotScriptlet(url) {
+      return !url.match(/^(javascript|data|about):/);
+    }
+
+    return bookmarks.filter(function(bookmark) {
+      return isNotScriptlet(bookmark.url);
+    });
+  },
+
+  _bookmarks: function(memo) {
+    this.children.forEach(function(node) {
+      if (node instanceof Bookmark) {
+        memo.push(node);
+      } else if (node instanceof Container) {
+        node._bookmarks(memo);
+      }
+    }.bind(this));
+  },
+
   containers: function() {
     var accumulator;
     this._containers(accumulator = []);
@@ -230,24 +262,10 @@ View.prototype = {
       this.$selector.append(container.toHTML());
     }.bind(this));
 
-    if (obj.children) {
-      obj.children.forEach(function(child) {
-        if (child instanceof Bookmark) {
-          child.toHtml(function(bookmarkHtml) {
-            $('#'+child.parentId).after(bookmarkHtml);
-          });
-        } else {
-          this.treeWalk(child);
-        }
-      }.bind(this));
-    }
-    if (obj['url']) {
-      // Test to make sure its not a "special" bookmark.
-      if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
-        // Beginning the code for async
-        bookmarksArray.push(new Bookmark(obj))
-
-      }
-    }
+    obj.bookmarksByAscendingDate().forEach(function(bookmark) {
+      bookmark.toHtml(function(bookmarkHtml) {
+        $('#'+bookmark.parentId).after(bookmarkHtml);
+      });
+    });
   }
 }
