@@ -170,6 +170,14 @@ function Container(data) {
 };
 
 Container.prototype = {
+  toHTML: function() {
+    return [
+      '<tr class="info" id="', this.id, '">',
+        '<td colspan="3"> <b>', this.title, '</b></td>',
+      '</tr>'
+    ].join('');
+  },
+
   containers: function() {
     var accumulator;
     this._containers(accumulator = []);
@@ -219,7 +227,7 @@ function View(selector) {
 View.prototype = {
   treeWalk: function(obj) {
     obj.containers().forEach(function(container) {
-      this.$selector.append('<tr class="info" id="'+container.id+'"><td colspan="3"> <b>'+container.title+'</b></td></tr>');
+      this.$selector.append(container.toHTML());
     }.bind(this));
 
     if (obj.children) {
