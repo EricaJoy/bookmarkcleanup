@@ -151,16 +151,16 @@ $(document).ready(function(){
 function getBookmarks(){
 
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
-    chrome.bookmarks.getTree(function(r)
-    {   var arrayLength = r.length;
-        window.bookmarksArray = [];
-        // console.log(arrayLength);
-        for (var i=0; i < arrayLength; i++) {
-          var c = new Container(r[i]);
-          new View("#bookmarks").treeWalk(c);
-    };
-
-    });
+  chrome.bookmarks.getTree(function(r) {
+    var arrayLength = r.length;
+    window.bookmarksArray = [];
+    console.log(arrayLength);
+    for (var i=0; i < arrayLength; i++) {
+      console.log(i);
+      var c = new Container(r);
+      new View("#bookmarks").treeWalk(c);
+    }
+  });
 }
 
 function Container(data) {
