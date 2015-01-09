@@ -156,37 +156,41 @@ function getBookmarks(){
         window.bookmarksArray = [];
         // console.log(arrayLength);
         for (var i=0; i < arrayLength; i++) {
-        treeWalk(r[i]);
+          new View("#bookmarks").treeWalk(r[i]);
     };
 
     });
 }
 
+function View(selector) {
+  this.$selector = $(selector);
+}
 
-function treeWalk(obj) {
-  if (obj.children) {
-    if (obj.title.length > 0){
-      $("#bookmarks").append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
+View.prototype = {
+  treeWalk: function(obj) {
+    if (obj.children) {
+      if (obj.title.length > 0){
+        this.$selector.append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
 
-      bookmarksArray.forEach(function(bookmark) {
-        bookmark.toHtml(function(bookmarkHtml) {
-          $('#'+bookmark.parentId).after(bookmarkHtml);
+        bookmarksArray.forEach(function(bookmark) {
+          bookmark.toHtml(function(bookmarkHtml) {
+            $('#'+bookmark.parentId).after(bookmarkHtml);
+          });
         });
-      });
-      // Empty out the bookmarksArray array
-      bookmarksArray = []
+        // Empty out the bookmarksArray array
+        bookmarksArray = []
 
-      obj.children.forEach(function(child) {
-        treeWalk(child);
-      });
-  }
-  if (obj['url']) {
-    // Test to make sure its not a "special" bookmark.
-    if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
-      // Beginning the code for async
-      bookmarksArray.push(new Bookmark(obj))
+        obj.children.forEach(function(child) {
+          this.treeWalk(child);
+        }.bind(this));
+    }
+    if (obj['url']) {
+      // Test to make sure its not a "special" bookmark.
+      if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
+        // Beginning the code for async
+        bookmarksArray.push(new Bookmark(obj))
 
+      }
     }
   }
-
 }
