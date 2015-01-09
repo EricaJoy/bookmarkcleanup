@@ -156,11 +156,61 @@ function getBookmarks(){
         window.bookmarksArray = [];
         // console.log(arrayLength);
         for (var i=0; i < arrayLength; i++) {
-          new View("#bookmarks").treeWalk(r[i]);
+          var c = new Container(r[i]);
+          new View("#bookmarks").treeWalk(c);
     };
 
     });
 }
+
+function Container(data) {
+  noQuery.extend(this, data);
+  this.raw = data;
+  this.children = this._calculateChildren();
+};
+
+Container.prototype = {
+  containers: function() {
+    var accumulator;
+    this._containers(accumulator = []);
+    return this._sanitizeContainers(accumulator);
+  },
+
+  _sanitizeContainers: function(containers) {
+    return containers.filter(function(container) {
+      return (container.title != "");
+    });
+  },
+
+  _containers: function(memo) {
+    this.children.forEach(function(node) {
+      if (node instanceof Container) {
+        memo.push(node);
+        node._containers(memo)
+      }
+    }.bind(this));
+  },
+
+  _calculateChildren: function() {
+    if (this.raw instanceof(Array)) {
+      return this.raw.map(function(childNode) {
+        return new Container(childNode);
+      }.bind(this));
+    } else if (this.raw.children.length > 0) {
+      return this.raw.children.map(function(child) {
+        if (typeof(child.url) === "undefined") {
+          return new Container(child);
+        } else {
+          return new Bookmark(child);
+        }
+      }.bind(this));
+    }
+    throw {
+      message: "Expected Container to be initialized with children that were enumerable; they were not.",
+      name: "UnclassifiedChildrenCollectionType"
+    }
+  }
+};
 
 function View(selector) {
   this.$selector = $(selector);
