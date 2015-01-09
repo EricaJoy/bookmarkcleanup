@@ -56,8 +56,11 @@ Bookmark.prototype = {
 // Get all the bookmarks
 $(document).ready(function(){
 
-    getBookmarks();
 
+  if ( typeof(chrome.bookmarks) === "undefined" ) return [];
+  chrome.bookmarks.getTree(function(r) {
+    new View("#bookmarks").treeWalk(new Container(r));
+  });
     $( "#threehun" ).click(function() {
         var val = $("#threehun a").text();
         switch(val){
@@ -148,12 +151,6 @@ $(document).ready(function(){
 
 });
 
-function getBookmarks(){
-  if ( typeof(chrome.bookmarks) === "undefined" ) return [];
-  chrome.bookmarks.getTree(function(r) {
-    new View("#bookmarks").treeWalk(new Container(r));
-  });
-}
 
 function Container(data) {
   noQuery.extend(this, data);
