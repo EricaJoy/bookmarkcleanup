@@ -218,21 +218,20 @@ function View(selector) {
 
 View.prototype = {
   treeWalk: function(obj) {
+    obj.containers().forEach(function(container) {
+      this.$selector.append('<tr class="info" id="'+container.id+'"><td colspan="3"> <b>'+container.title+'</b></td></tr>');
+    }.bind(this));
+
     if (obj.children) {
-      if (obj.title.length > 0){
-        this.$selector.append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
-
-        bookmarksArray.forEach(function(bookmark) {
-          bookmark.toHtml(function(bookmarkHtml) {
-            $('#'+bookmark.parentId).after(bookmarkHtml);
+      obj.children.forEach(function(child) {
+        if (child instanceof Bookmark) {
+          child.toHtml(function(bookmarkHtml) {
+            $('#'+child.parentId).after(bookmarkHtml);
           });
-        });
-        // Empty out the bookmarksArray array
-        bookmarksArray = []
-
-        obj.children.forEach(function(child) {
+        } else {
           this.treeWalk(child);
-        }.bind(this));
+        }
+      }.bind(this));
     }
     if (obj['url']) {
       // Test to make sure its not a "special" bookmark.
