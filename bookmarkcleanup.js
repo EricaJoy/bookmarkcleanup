@@ -144,6 +144,7 @@ Container.prototype = {
 
 function View(selector) {
   this.$selector = $(selector);
+  this._initializeControls();
 }
 
 View.prototype = {
@@ -157,97 +158,101 @@ View.prototype = {
         $('#'+bookmark.parentId).after(bookmarkHtml);
       });
     });
+  },
+
+  _initializeSelectionControls: function() {
+    $( "#threehun" ).click(function() {
+      var val = $("#threehun a").text();
+      switch(val){
+        case "Deselect 300's":
+          $( "#threehun a" ).text("Select 300's")
+        $("form input:checkbox[status^=3]").prop("checked", false);
+        break;
+        case "Select 300's":
+          $( "#threehun a" ).text("Deselect 300's")
+        $("form input:checkbox[status^=3]").prop("checked", true);
+        break;
+      }
+    });
+
+
+    $( "#fourhun" ).click(function() {
+      var val = $("#fourhun a").text();
+      switch(val){
+        case "Deselect 400's":
+          $( "#fourhun a" ).text("Select 400's")
+        $("form input:checkbox[status^=4]").prop("checked", false);
+        break;
+        case "Select 400's":
+          $( "#fourhun a" ).text("Deselect 400's")
+        $("form input:checkbox[status^=4]").prop("checked", true);
+        break;
+      }
+    });
+
+    $( "#fivehun" ).click(function() {
+      var val = $("#fivehun a").text();
+      switch(val){
+        case "Deselect 500's":
+          $( "#fivehun a" ).text("Select 500's")
+        $("form input:checkbox[status^=5]").prop("checked", false);
+        break;
+        case "Select 500's":
+          $( "#fivehun a" ).text("Deselect 500's")
+        $("form input:checkbox[status^=5]").prop("checked", true);
+        break;
+      }
+    });
+
+    $( "#generics" ).click(function() {
+      var val = $("#generics a").text();
+      switch(val){
+        case "Deselect Generic Errors":
+          $( "#generics a" ).text("Select Generic Errors")
+        $("form input:checkbox[status^=0]").prop("checked", false);
+        break;
+        case "Select Generic Errors":
+          $( "#generics a" ).text("Deselect Generic Errors")
+        $("form input:checkbox[status^=0]").prop("checked", true);
+        break;
+      }
+    });
+  },
+
+  _initializeControls: function() {
+    this._initializeSelectionControls();
+
+    $( "#clean").click(function() {
+      console.log("clean click")
+      var checkedLength = $( "input:checked" ).length
+      if (checkedLength < 1) {
+        $( "#delwarning" ).text("You haven't selected any bookmarks to delete.")
+        $( "#dialog" ).dialog({ buttons: [ { text: "Close", click: function() { $( this ).dialog( "close" ); } } ] });
+      }
+      else {
+        $( "#delwarning" ).text("This will delete "+checkedLength+" bookmarks. Are you sure you want to do this?")
+        $( "#dialog" ).dialog({ buttons: [
+          { text: "I'm sure.", click: function() {
+          $( this ).dialog( "close" );
+          for (var i=0; i < checkedLength; i++) {
+            var badBookmark = $( "input:checked" )[i].value;
+            chrome.bookmarks.remove(String(badBookmark))
+            $( '#'+badBookmark ).remove();
+          };
+
+        }},
+        { text: "Nope, get me out of here.", click: function() { $( this ).dialog( "close" );}}
+        ]});
+      };
+    });
   }
 }
 
 // Get all the bookmarks
 $(document).ready(function(){
-
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
   chrome.bookmarks.getTree(function(r) {
     new View("#bookmarks").draw(new Container(r));
-  });
-
-  $( "#threehun" ).click(function() {
-    var val = $("#threehun a").text();
-    switch(val){
-      case "Deselect 300's":
-        $( "#threehun a" ).text("Select 300's")
-      $("form input:checkbox[status^=3]").prop("checked", false);
-      break;
-      case "Select 300's":
-        $( "#threehun a" ).text("Deselect 300's")
-      $("form input:checkbox[status^=3]").prop("checked", true);
-      break;
-    }
-  });
-
-
-  $( "#fourhun" ).click(function() {
-    var val = $("#fourhun a").text();
-    switch(val){
-      case "Deselect 400's":
-        $( "#fourhun a" ).text("Select 400's")
-      $("form input:checkbox[status^=4]").prop("checked", false);
-      break;
-      case "Select 400's":
-        $( "#fourhun a" ).text("Deselect 400's")
-      $("form input:checkbox[status^=4]").prop("checked", true);
-      break;
-    }
-  });
-
-  $( "#fivehun" ).click(function() {
-    var val = $("#fivehun a").text();
-    switch(val){
-      case "Deselect 500's":
-        $( "#fivehun a" ).text("Select 500's")
-      $("form input:checkbox[status^=5]").prop("checked", false);
-      break;
-      case "Select 500's":
-        $( "#fivehun a" ).text("Deselect 500's")
-      $("form input:checkbox[status^=5]").prop("checked", true);
-      break;
-    }
-  });
-
-  $( "#generics" ).click(function() {
-    var val = $("#generics a").text();
-    switch(val){
-      case "Deselect Generic Errors":
-        $( "#generics a" ).text("Select Generic Errors")
-      $("form input:checkbox[status^=0]").prop("checked", false);
-      break;
-      case "Select Generic Errors":
-        $( "#generics a" ).text("Deselect Generic Errors")
-      $("form input:checkbox[status^=0]").prop("checked", true);
-      break;
-    }
-  });
-
-
-  $( "#clean").click(function() {
-    console.log("clean click")
-    var checkedLength = $( "input:checked" ).length
-    if (checkedLength < 1) {
-      $( "#delwarning" ).text("You haven't selected any bookmarks to delete.")
-      $( "#dialog" ).dialog({ buttons: [ { text: "Close", click: function() { $( this ).dialog( "close" ); } } ] });
-    }
-    else {
-      $( "#delwarning" ).text("This will delete "+checkedLength+" bookmarks. Are you sure you want to do this?")
-      $( "#dialog" ).dialog({ buttons: [
-        { text: "I'm sure.", click: function() {
-        $( this ).dialog( "close" );
-        for (var i=0; i < checkedLength; i++) {
-          var badBookmark = $( "input:checked" )[i].value;
-          chrome.bookmarks.remove(String(badBookmark))
-          $( '#'+badBookmark ).remove();
-        };
-
-      }},
-      { text: "Nope, get me out of here.", click: function() { $( this ).dialog( "close" );}}
-      ]});
-    };
   });
 });
 
