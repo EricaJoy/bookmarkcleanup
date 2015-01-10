@@ -188,26 +188,44 @@ View.prototype = {
 
   _initializeDeletionControls: function() {
     $( "#clean").click(function() {
-      console.log("clean click")
       var checkedLength = $( "input:checked" ).length
       if (checkedLength < 1) {
         $( "#delwarning" ).text("You haven't selected any bookmarks to delete.")
-        $( "#dialog" ).dialog({ buttons: [ { text: "Close", click: function() { $( this ).dialog( "close" ); } } ] });
+        $( "#dialog" ).dialog({
+          buttons: [{
+            text: "Close",
+            click: function() {
+              $( this ).dialog( "close" );
+            }
+          }
+          ]
+        });
       }
       else {
-        $( "#delwarning" ).text("This will delete "+checkedLength+" bookmarks. Are you sure you want to do this?")
-        $( "#dialog" ).dialog({ buttons: [
-          { text: "I'm sure.", click: function() {
-          $( this ).dialog( "close" );
-          for (var i=0; i < checkedLength; i++) {
-            var badBookmark = $( "input:checked" )[i].value;
-            chrome.bookmarks.remove(String(badBookmark))
-            $( '#'+badBookmark ).remove();
-          };
-
-        }},
-        { text: "Nope, get me out of here.", click: function() { $( this ).dialog( "close" );}}
-        ]});
+        $( "#delwarning" )
+          .text("This will delete " +
+                checkedLength +
+                " bookmarks. Are you sure you want to do this?")
+        $( "#dialog" ).dialog({
+          buttons: [
+            {
+              text: "I'm sure.",
+              click: function() {
+                $( this ).dialog( "close" );
+                for (var i=0; i < checkedLength; i++) {
+                  var badBookmark = $( "input:checked" )[i].value;
+                  chrome.bookmarks.remove(String(badBookmark))
+                  $('#'+badBookmark).remove();
+                };
+              }
+          },
+          {
+            text: "Nope, get me out of here.",
+            click: function() {
+              $( this ).dialog( "close" );
+            }
+          }]
+        });
       };
     });
   },
