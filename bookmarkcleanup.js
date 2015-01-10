@@ -147,7 +147,7 @@ function View(selector) {
 }
 
 View.prototype = {
-  treeWalk: function(obj) {
+  draw: function(obj) {
     obj.containers().forEach(function(container) {
       this.$selector.append(container.toHTML());
     }.bind(this));
@@ -165,7 +165,7 @@ $(document).ready(function(){
 
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
   chrome.bookmarks.getTree(function(r) {
-    new View("#bookmarks").treeWalk(new Container(r));
+    new View("#bookmarks").draw(new Container(r));
   });
 
   $( "#threehun" ).click(function() {
