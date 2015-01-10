@@ -161,61 +161,28 @@ View.prototype = {
   },
 
   _initializeSelectionControls: function() {
-    $( "#threehun" ).click(function() {
-      var val = $("#threehun a").text();
-      switch(val){
-        case "Deselect 300's":
-          $( "#threehun a" ).text("Select 300's")
-        $("form input:checkbox[status^=3]").prop("checked", false);
-        break;
-        case "Select 300's":
-          $( "#threehun a" ).text("Deselect 300's")
-        $("form input:checkbox[status^=3]").prop("checked", true);
-        break;
-      }
-    });
+    var links = [
+      { selector: "#threehun", text: "300s", inputsSelector: "form input:checkbox[status^=3]" },
+      { selector: "#fourhun", text: "400s", inputsSelector: "form input:checkbox[status^=4]"  },
+      { selector: "#fivehun", text: "500s", inputsSelector: "form input:checkbox[status^=5]"  },
+      { selector: "#generics", text: "Generic Errors", inputsSelector: "form input:checkbox[status^=0]"  }
+    ];
 
-
-    $( "#fourhun" ).click(function() {
-      var val = $("#fourhun a").text();
-      switch(val){
-        case "Deselect 400's":
-          $( "#fourhun a" ).text("Select 400's")
-        $("form input:checkbox[status^=4]").prop("checked", false);
-        break;
-        case "Select 400's":
-          $( "#fourhun a" ).text("Deselect 400's")
-        $("form input:checkbox[status^=4]").prop("checked", true);
-        break;
-      }
-    });
-
-    $( "#fivehun" ).click(function() {
-      var val = $("#fivehun a").text();
-      switch(val){
-        case "Deselect 500's":
-          $( "#fivehun a" ).text("Select 500's")
-        $("form input:checkbox[status^=5]").prop("checked", false);
-        break;
-        case "Select 500's":
-          $( "#fivehun a" ).text("Deselect 500's")
-        $("form input:checkbox[status^=5]").prop("checked", true);
-        break;
-      }
-    });
-
-    $( "#generics" ).click(function() {
-      var val = $("#generics a").text();
-      switch(val){
-        case "Deselect Generic Errors":
-          $( "#generics a" ).text("Select Generic Errors")
-        $("form input:checkbox[status^=0]").prop("checked", false);
-        break;
-        case "Select Generic Errors":
-          $( "#generics a" ).text("Deselect Generic Errors")
-        $("form input:checkbox[status^=0]").prop("checked", true);
-        break;
-      }
+    links.forEach(function(clickBehaviorSpecifier) {
+      $(clickBehaviorSpecifier.selector).on("click", function(e) {
+        if (
+          typeof($(e.target)).data('toggled') == "undefined" ||
+            $(e.target).data('toggled') === false
+        ) {
+          $(e.target).data('toggled', true);
+          $(e.target).text("Deselect " + clickBehaviorSpecifier.text);
+          $(clickBehaviorSpecifier.inputsSelector).prop("checked", true);
+        } else {
+          $(e.target).text("Select " + clickBehaviorSpecifier.text);
+          $(e.target).data('toggled', false);
+          $(clickBehaviorSpecifier.inputsSelector).prop("checked", false);
+        }
+      });
     });
   },
 
