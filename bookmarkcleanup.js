@@ -219,9 +219,7 @@ View.prototype = {
     });
   },
 
-  _initializeControls: function() {
-    this._initializeSelectionControls();
-
+  _initializeDeletionControls: function() {
     $( "#clean").click(function() {
       console.log("clean click")
       var checkedLength = $( "input:checked" ).length
@@ -245,6 +243,11 @@ View.prototype = {
         ]});
       };
     });
+  },
+
+  _initializeControls: function() {
+    this._initializeSelectionControls();
+    this._initializeDeletionControls();
   }
 }
 
