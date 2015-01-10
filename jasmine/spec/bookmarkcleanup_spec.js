@@ -8,7 +8,6 @@ describe("noQuery helper singleton", function() {
   });
 });
 
-
 describe("Bookmark", function() {
   var testUrl = "/good/url",
     badUrl = "/bad/url";
@@ -65,3 +64,52 @@ describe("Bookmark", function() {
     });
   });
 });
+
+describe("Container", function() {
+  var c, trueRoot, subContainer,
+  containerStub = {
+    children: [
+      { url: 'alpha'},
+      { url: 'beta' },
+      {
+        children: [
+          { url: 'sub1' },
+          { url: 'sub2' },
+          {
+            children: [
+          { url: 'subA1' },
+          { url: 'subA2' },
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  beforeEach(function() {
+    jasmine.Ajax.install();
+
+      jasmine.Ajax.stubRequest('alpha').andReturn({
+        "status": 200,
+        "responseText": 'in alpha response'
+      });
+
+      jasmine.Ajax.stubRequest('beta').andReturn({
+        "status": 400,
+        "responseText": 'in beta response'
+      });
+
+      c = new Container([ containerStub ]);
+      trueRoot = c.children[0];
+      subContainer = trueRoot.containers()[0];
+  });
+
+  afterEach(function() {
+    jasmine.Ajax.uninstall();
+  });
+
+  it("finds all nested containers", function() {
+    expect(c.containers().length).toEqual(3);
+  });
+});
+
