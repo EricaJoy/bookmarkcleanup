@@ -201,46 +201,34 @@ View.prototype = {
   },
 
   _initializeDeletionControls: function() {
-    $( "#clean").click(function() {
-      var checkedLength = $( "input:checked" ).length
+    document.getElementById("clean").addEventListener('click', function() {
+      var result,
+        warningText,
+        checkedBoxes = noQuery.checkboxes().filter(function(cb) {
+          return !!cb.checked;
+        }),
+        checkedLength = checkedBoxes.length;
+
       if (checkedLength < 1) {
-        $( "#delwarning" ).text("You haven't selected any bookmarks to delete.")
-        $( "#dialog" ).dialog({
-          buttons: [{
-            text: "Close",
-            click: function() {
-              $( this ).dialog( "close" );
-            }
-          }
-          ]
-        });
+        alert("You haven't selected any bookmarks to delete.");
+        return;
+      } else {
+        result = confirm(
+          ["This will delete ",
+          checkedLength,
+          " bookmark",
+          (checkedLength > 1 ? "s" : ""),
+          ". Are you sure you want to do this?"].join('')
+        );
+        if (result) {
+          checkedBoxes.forEach(function(cb) {
+            var badBookmarkValue = String(cb.getAttribute("value")),
+              node = document.getElementById(badBookmarkValue);
+            chrome.bookmarks.remove(badBookmarkValue)
+            node.parentNode.removeChild(node);
+          });
+        }
       }
-      else {
-        $( "#delwarning" )
-          .text("This will delete " +
-                checkedLength +
-                " bookmarks. Are you sure you want to do this?")
-        $( "#dialog" ).dialog({
-          buttons: [
-            {
-              text: "I'm sure.",
-              click: function() {
-                $( this ).dialog( "close" );
-                for (var i=0; i < checkedLength; i++) {
-                  var badBookmark = $( "input:checked" )[i].value;
-                  chrome.bookmarks.remove(String(badBookmark))
-                  $('#'+badBookmark).remove();
-                };
-              }
-          },
-          {
-            text: "Nope, get me out of here.",
-            click: function() {
-              $( this ).dialog( "close" );
-            }
-          }]
-        });
-      };
     });
   },
 
