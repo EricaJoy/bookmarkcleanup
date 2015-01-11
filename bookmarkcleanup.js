@@ -151,14 +151,15 @@ Container.prototype = {
 };
 
 function View(selector) {
-  this.$selector = $(selector);
+  this.selectorNode = document.getElementById(selector);
   this._initializeControls();
 }
 
 View.prototype = {
   draw: function(obj) {
     obj.containers().forEach(function(container) {
-      this.$selector.append(container.toHTML());
+      this.selectorNode
+        .insertAdjacentHTML('beforeend', container.toHTML());
     }.bind(this));
 
     obj.bookmarksByAscendingDate().forEach(function(bookmark) {
@@ -242,7 +243,7 @@ View.prototype = {
 $(document).ready(function(){
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
   chrome.bookmarks.getTree(function(r) {
-    new View("#bookmarks").draw(new Container(r));
+    new View("bookmarks").draw(new Container(r));
   });
 });
 
