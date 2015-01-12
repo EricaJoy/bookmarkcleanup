@@ -239,7 +239,7 @@ View.prototype = {
   }
 }
 
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', function() {
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
   chrome.bookmarks.getTree(function(r) {
     new View("bookmarks").draw(new Container(r));
