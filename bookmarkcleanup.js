@@ -239,7 +239,6 @@ View.prototype = {
   }
 }
 
-// Get all the bookmarks
 $(document).ready(function(){
   if ( typeof(chrome.bookmarks) === "undefined" ) return [];
   chrome.bookmarks.getTree(function(r) {
