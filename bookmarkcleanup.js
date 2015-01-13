@@ -8,7 +8,8 @@ noQuery = {
   },
 
   checkboxes: function() {
-    var inputs = Array.prototype.slice.call(document.querySelectorAll("form input"));
+    var slice = Array.prototype.slice,
+      inputs = slice.call(document.querySelectorAll("form input"));
 
     return  checkboxes = inputs.filter(function(input) {
         return input.attributes['type'].value === "checkbox";
