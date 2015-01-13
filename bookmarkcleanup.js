@@ -13,6 +13,24 @@ noQuery = {
     return  checkboxes = inputs.filter(function(input) {
         return input.attributes['type'].value === "checkbox";
       });
+  },
+
+  get: function(url) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function(args) {
+        try {
+          if (this.readyState != 4) return;
+          resolve(this);
+        } catch(err) {
+          reject(new Error(err));
+        }
+      };
+
+      xhr.open("GET", url);
+      xhr.send();
+    });
   }
 }
 
@@ -20,24 +38,26 @@ function Bookmark(data) {
   noQuery.extend(this, data);
 
   this.statusCode = null;
-  this._toHtmlDeferred = $.Deferred();
-  this.determineHttpStatus();
+  this.statusLookupActivity = this.determineHttpStatus();
 };
 
 Bookmark.prototype = {
   toHtml: function(callback) {
-    this._toHtmlDeferred.always(function() {
-      callback(this._template());
-    }.bind(this))
-    return this._toHtmlDeferred;
+    return this.statusLookupActivity.then(function() {
+      return this._template();
+    }.bind(this));
   },
 
   determineHttpStatus: function() {
-    this.statusDeferred = $.ajax({ url: this.url })
-    .always(function(potentialStatusBearer1, textStatus, potentialStatusBearer2) {
-      this.statusCode = (potentialStatusBearer1.status || potentialStatusBearer2.status);
-      this._toHtmlDeferred.resolve();
-    }.bind(this));
+    successCallback = function(xhr) {
+      this.statusCode = xhr.status;
+    }.bind(this),
+    failureCallback = function(error) {
+      throw(error);
+    };
+
+    return noQuery.get(this.url)
+      .then(successCallback, failureCallback);
   },
 
   _template: function() {
@@ -163,9 +183,10 @@ View.prototype = {
     }.bind(this));
 
     obj.bookmarksByAscendingDate().forEach(function(bookmark) {
-      bookmark.toHtml(function(bookmarkHtml) {
-        $('#'+bookmark.parentId).after(bookmarkHtml);
-      });
+      bookmark.toHtml().then(function(bookmarkHtml) {
+        document.getElementById(bookmark.parentId)
+          .insertAdjacentHTML('afterend', bookmarkHtml);
+      })
     });
   },
 
