@@ -32,36 +32,6 @@ describe("Bookmark", function() {
       expect(mockedRequest.url).toEqual(testUrl);
     });
 
-    it("makes the status as 200 for a successful request", function() {
-        var bm;
-
-        jasmine.Ajax.stubRequest(testUrl).andReturn({
-          "status": 200,
-          "responseText": 'in spec response'
-        });
-
-        bm =  new Bookmark({ url: testUrl }),
-        expect(bm.statusCode).toEqual(200);
-    });
-
-    it("builds a template based on an unsuccessful request", function(done) {
-        var bm, htmlString,
-          expectedString = '<tr id=><td><a href="/bad/url">  </a> </td><td name="status"></td><td class="checkbox"><input type="checkbox" parentId="" status="" name="selected" value=""></td></tr>';
-
-        jasmine.Ajax.stubRequest(testUrl).andReturn({
-          "status": 400,
-          "responseText": 'Bad news'
-        });
-
-        bm = new Bookmark({ url: badUrl });
-        bm.toHtml(function(htmlBody) {
-          htmlString = htmlBody;
-          expect(htmlString).toEqual(expectedString);
-          done();
-        });
-
-        bm.toHtml().resolve();
-    });
   });
 });
 
@@ -69,16 +39,16 @@ describe("Container", function() {
   var c, trueRoot, subContainer,
   containerStub = {
     children: [
-      { url: 'alpha'},
-      { url: 'beta' },
+      { url: 'http://alpha.example.com'},
+      { url: 'http://beta.example.com' },
       {
         children: [
-          { url: 'sub1' },
-          { url: 'sub2' },
+          { url: 'http://sub1.example.com' },
+          { url: 'http://sub2.example.com' },
           {
             children: [
-          { url: 'subA1' },
-          { url: 'subA2' },
+          { url: 'http://subA1.example.com' },
+          { url: 'http://subA2.example.com' },
             ]
           }
         ]
