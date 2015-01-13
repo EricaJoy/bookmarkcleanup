@@ -39,16 +39,16 @@ describe("Container", function() {
   var c, trueRoot, subContainer,
   containerStub = {
     children: [
-      { url: 'alpha'},
-      { url: 'beta' },
+      { url: 'http://alpha.example.com'},
+      { url: 'http://beta.example.com' },
       {
         children: [
-          { url: 'sub1' },
-          { url: 'sub2' },
+          { url: 'http://sub1.example.com' },
+          { url: 'http://sub2.example.com' },
           {
             children: [
-          { url: 'subA1' },
-          { url: 'subA2' },
+          { url: 'http://subA1.example.com' },
+          { url: 'http://subA2.example.com' },
             ]
           }
         ]

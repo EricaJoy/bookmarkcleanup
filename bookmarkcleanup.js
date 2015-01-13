@@ -159,6 +159,7 @@ Container.prototype = {
         if (typeof(child.url) === "undefined") {
           return new Container(child);
         } else {
+          if (!child.url.match(/^http/)) return;
           return new Bookmark(child);
         }
       }.bind(this));
