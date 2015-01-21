@@ -4,7 +4,6 @@
   "description": "Cleanup your bookmarks.",
   "permissions": [
     "bookmarks",
-    "tabs",
     "http://*/",
     "https://*/"
   ],
