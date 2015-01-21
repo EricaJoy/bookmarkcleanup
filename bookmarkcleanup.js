@@ -194,11 +194,20 @@ View.prototype = {
 
   _initializeSelectionControls: function() {
     var links = [
-      { selector: "threehun", text: "300s", inputsSelector: function() { return noQuery.checkboxes().filter(function(cb){ return cb.attributes['status'].value.match(/^3/) }) }},
-      { selector: "fourhun", text: "400s", inputsSelector: function() { return noQuery.checkboxes().filter(function(cb){ return cb.attributes['status'].value.match(/^4/) }) }},
-      { selector: "fivehun", text: "500s", inputsSelector: function() { return noQuery.checkboxes().filter(function(cb){ return cb.attributes['status'].value.match(/^5/) }) }},
-      { selector: "generics", text: "Generic Errors", inputsSelector: function() { return noQuery.checkboxes().filter(function(cb){ return cb.attributes['status'].value.match(/^0/) }) }}
-    ];
+      { selector: "threehun", text: "300s" },
+      { selector: "fourhun",  text: "400s" },
+      { selector: "fivehun",  text: "500s" },
+      { selector: "generics", text: "Generic Errors" }
+    ].map(function(obj) {
+      var matchRE = new RegExp(obj.text.charAt(0));
+      obj.inputsSelector = function() {
+        return noQuery.checkboxes()
+          .filter(function(cb) {
+            return cb.attributes['status'].value.match(matchRE);
+          });
+      }
+      return obj;
+    });
 
     links.forEach(function(clickBehaviorSpecifier) {
       document
