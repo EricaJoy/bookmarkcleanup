@@ -1,201 +1,280 @@
-
-// Get all the bookmarks
-$(document).ready(function(){
-
-    getBookmarks();
-
-    $( "#threehun" ).click(function() {
-        var val = $("#threehun a").text();
-        switch(val){
-            case "Deselect 300's":
-                $( "#threehun a" ).text("Select 300's")
-                $("form input:checkbox[status^=3]").prop("checked", false);
-                break;
-            case "Select 300's":
-                $( "#threehun a" ).text("Deselect 300's")
-                $("form input:checkbox[status^=3]").prop("checked", true); 
-                break;
-        }            
-    });
-
-
-    $( "#fourhun" ).click(function() {
-        var val = $("#fourhun a").text();
-        switch(val){
-            case "Deselect 400's":
-                $( "#fourhun a" ).text("Select 400's")
-                $("form input:checkbox[status^=4]").prop("checked", false);
-                break;
-            case "Select 400's":
-                $( "#fourhun a" ).text("Deselect 400's")
-                $("form input:checkbox[status^=4]").prop("checked", true); 
-                break;
-        }            
-    });
-
-    $( "#fivehun" ).click(function() {
-        var val = $("#fivehun a").text();
-        switch(val){
-            case "Deselect 500's":
-                $( "#fivehun a" ).text("Select 500's")
-                $("form input:checkbox[status^=5]").prop("checked", false);
-                break;
-            case "Select 500's":
-                $( "#fivehun a" ).text("Deselect 500's")
-                $("form input:checkbox[status^=5]").prop("checked", true); 
-                break;
-        }            
-    });
-
-    $( "#generics" ).click(function() {
-        var val = $("#generics a").text();
-        switch(val){
-            case "Deselect Generic Errors":
-                $( "#generics a" ).text("Select Generic Errors")
-                $("form input:checkbox[status^=0]").prop("checked", false);
-                break;
-            case "Select Generic Errors":
-                $( "#generics a" ).text("Deselect Generic Errors")
-                $("form input:checkbox[status^=0]").prop("checked", true); 
-                break;
-        }            
-    });
-
-
-    $( "#clean").click(function() {
-    console.log("clean click")
-    var checkedLength = $( "input:checked" ).length
-    if (checkedLength < 1) {
-        $( "#delwarning" ).text("You haven't selected any bookmarks to delete.")
-        $( "#dialog" ).dialog({ buttons: [ { text: "Close", click: function() { $( this ).dialog( "close" ); } } ] });
+noQuery = {
+  extend: function(recipient, source) {
+    for (var key in source) {
+      if(source.hasOwnProperty(key)){
+        recipient[key] = source[key];
+      }
     }
-    else {
-        $( "#delwarning" ).text("This will delete "+checkedLength+" bookmarks. Are you sure you want to do this?")
-        $( "#dialog" ).dialog({ buttons: [
-            { text: "I'm sure.", click: function() {
-                $( this ).dialog( "close" );
-                for (var i=0; i < checkedLength; i++) {
-                    var badBookmark = $( "input:checked" )[i].value;
-                    chrome.bookmarks.remove(String(badBookmark))
-                    $( '#'+badBookmark ).remove();
-                };
+  },
 
-            }},
-            { text: "Nope, get me out of here.", click: function() { $( this ).dialog( "close" );}}
+  checkboxes: function() {
+    var slice = Array.prototype.slice,
+      inputs = slice.call(document.querySelectorAll("form input"));
 
+    return  checkboxes = inputs.filter(function(input) {
+        return input.attributes['type'].value === "checkbox";
+      });
+  },
 
-            ]});   
-    };
-    
+  get: function(url) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
 
-    });
-
-
-
-});
-
-function getBookmarks(){
-
-    chrome.bookmarks.getTree(function(r)
-    {   var arrayLength = r.length;
-        // console.log(arrayLength);
-        for (var i=0; i < arrayLength; i++) {
-        treeWalk(r[i]);
-    };
-
-    });
-}
-
-
-function treeWalk(obj) {
-    if (obj.children) {
-        if (obj.title.length > 0){
-            $("#bookmarks").append('<tr class="info" id="'+obj.id+'"><td colspan="3"> <b>'+obj.title+'</b></td></tr>');}
-            
-            if (typeof bookmarksArray === "undefined") {
-                // Make an empty array to hold the bookmarks
-                bookmarksArray = []
-            }
-            else {
-                //Do some stuff with the current bookmarksArray
-                console.log (bookmarksArray)
-                    for (var i=0; i < bookmarksArray.length; i++) {
-                        urlTesting(bookmarksArray[i]);
-                    }
-                // Empty out the bookmarksArray array
-                bookmarksArray = []
-            }
-            
-            // for each child, do the tree walk
-            for (var i=0; i < obj.children.length; i++) {
-                treeWalk(obj.children[i]);
-                // console.log(urls)
-
-            }
-
-        
-    }
-    if (obj['url']) {
-        // Test to make sure its not a "special" bookmark.
-        if (obj.id && (obj.url.indexOf('javascript:') < 0) && (obj.url.indexOf('data:') < 0) && (obj.url.indexOf('about:') < 0)) {
-        // Beginning the code for async
-        bookmarksArray.push(obj)
- 
-            }
+      xhr.onreadystatechange = function(args) {
+        try {
+          if (this.readyState != 4) return;
+          resolve(this);
+        } catch(err) {
+          reject(new Error(err));
         }
+      };
 
-    }
-
-
-function urlTesting(obj) {
-
-        $.ajax({
-            url: obj.url,
-            type: 'GET',
-            statusCode: {
-            
-            0: function() {
-              var code = 0;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-            $('#'+obj.parentId).after(row);
-            },
-
-            403: function() {
-              var code = 403;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-            $('#'+obj.parentId).after(row);
-            },
-
-
-            404: function() {
-              var code = 404;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-            $('#'+obj.parentId).after(row);
-            },
-
-            503: function() {
-              var code = 503;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-            $('#'+obj.parentId).after(row);
-            },
-
-            408: function() {
-              var code = 408;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-            $('#'+obj.parentId).after(row);
-            },
-
-            500: function() {
-              var code = 500;
-              var row = '<tr id='+obj.id+'><td><a href="'+obj.url+'"> '+obj.title+' </a> </td><td name="status">'+code+'</td><td class="checkbox"><input type="checkbox" parentId="'+obj.parentId+'" status="'+code+'" name="selected" value="'+obj.id+'"></td></tr>'
-            $('#'+obj.parentId).after(row);
-            },
-
-          }
-
-        });
+      xhr.open("GET", url);
+      xhr.send();
+    });
+  }
 }
 
+function Bookmark(data) {
+  noQuery.extend(this, data);
 
+  this.statusCode = null;
+  this.statusLookupActivity = this.determineHttpStatus();
+};
 
+Bookmark.prototype = {
+  toHtml: function(callback) {
+    return this.statusLookupActivity.then(function() {
+      return this._template();
+    }.bind(this));
+  },
+
+  determineHttpStatus: function() {
+    successCallback = function(xhr) {
+      this.statusCode = xhr.status;
+    }.bind(this),
+    failureCallback = function(error) {
+      throw(error);
+    };
+
+    return noQuery.get(this.url)
+      .then(successCallback, failureCallback);
+  },
+
+  _template: function() {
+    return [
+      '<tr id=',
+      this.id,
+      '><td><a href="',
+      this.url,
+      '"> ',
+      this.title,
+      ' </a> </td><td name="status">',
+      this.statusCode,
+      '</td><td class="checkbox"><input type="checkbox" parentId="',
+      this.parentId,
+      '" status="',
+      this.statusCode,
+      '" name="selected" value="',
+      this.id,
+      '"></td></tr>'
+    ].join('');
+  }
+};
+
+function Container(data) {
+  noQuery.extend(this, data);
+  this.raw = data;
+  this.children = this._calculateChildren();
+};
+
+Container.prototype = {
+  toHTML: function() {
+    return [
+      '<tr class="info" id="', this.id, '">',
+        '<td colspan="3"> <b>', this.title, '</b></td>',
+      '</tr>'
+    ].join('');
+  },
+
+  bookmarks: function() {
+    var accumulator;
+    this._bookmarks(accumulator = []);
+    return this._sanitizeBookmarks(accumulator);
+  },
+
+  bookmarksByAscendingDate: function() {
+    return this.bookmarks().sort(function(a, b) {
+      return b.dateAdded - a.dateAdded;
+    });
+  },
+
+  _sanitizeBookmarks: function(bookmarks) {
+    function isNotScriptlet(url) {
+      return !url.match(/^(javascript|data|about):/);
+    }
+
+    return bookmarks.filter(function(bookmark) {
+      return isNotScriptlet(bookmark.url);
+    });
+  },
+
+  _bookmarks: function(memo) {
+    this.children.forEach(function(node) {
+      if (node instanceof Bookmark) {
+        memo.push(node);
+      } else if (node instanceof Container) {
+        node._bookmarks(memo);
+      }
+    }.bind(this));
+  },
+
+  containers: function() {
+    var accumulator;
+    this._containers(accumulator = []);
+    return this._sanitizeContainers(accumulator);
+  },
+
+  _sanitizeContainers: function(containers) {
+    return containers.filter(function(container) {
+      return (container.title != "");
+    });
+  },
+
+  _containers: function(memo) {
+    this.children.forEach(function(node) {
+      if (node instanceof Container) {
+        memo.push(node);
+        node._containers(memo)
+      }
+    }.bind(this));
+  },
+
+  _calculateChildren: function() {
+    if (this.raw instanceof(Array)) {
+      return this.raw.map(function(childNode) {
+        return new Container(childNode);
+      }.bind(this));
+    } else if (this.raw.children.length > 0) {
+      return this.raw.children.map(function(child) {
+        if (typeof(child.url) === "undefined") {
+          return new Container(child);
+        } else {
+          if (!child.url.match(/^http/)) return;
+          return new Bookmark(child);
+        }
+      }.bind(this));
+    }
+    throw {
+      message: "Expected Container to be initialized with children that were enumerable; they were not.",
+      name: "UnclassifiedChildrenCollectionType"
+    }
+  }
+};
+
+function View(selector) {
+  this.selectorNode = document.getElementById(selector);
+  this._initializeControls();
+}
+
+View.prototype = {
+  draw: function(obj) {
+    obj.containers().forEach(function(container) {
+      this.selectorNode
+        .insertAdjacentHTML('beforeend', container.toHTML());
+    }.bind(this));
+
+    obj.bookmarksByAscendingDate().forEach(function(bookmark) {
+      bookmark.toHtml().then(function(bookmarkHtml) {
+        document.getElementById(bookmark.parentId)
+          .insertAdjacentHTML('afterend', bookmarkHtml);
+      })
+    });
+  },
+
+  _initializeSelectionControls: function() {
+    var links = [
+      { selector: "threehun", text: "300s" },
+      { selector: "fourhun",  text: "400s" },
+      { selector: "fivehun",  text: "500s" },
+      { selector: "generics", text: "Generic Errors" }
+    ].map(function(obj) {
+      var matchRE = new RegExp(obj.text.charAt(0));
+      obj.inputsSelector = function() {
+        return noQuery.checkboxes()
+          .filter(function(cb) {
+            return cb.attributes['status'].value.match(matchRE);
+          });
+      }
+      return obj;
+    });
+
+    links.forEach(function(clickBehaviorSpecifier) {
+      document
+        .getElementById(clickBehaviorSpecifier.selector)
+        .addEventListener('click', function(e) {
+          var targetNode = e.currentTarget,
+            untoggled = !targetNode.getAttribute('data-toggled');
+        if (untoggled) {
+          targetNode.setAttribute('data-toggled', true);
+          targetNode.childNodes[0].innerHTML = "Deselect " + clickBehaviorSpecifier.text;
+          clickBehaviorSpecifier.inputsSelector().forEach(function(cb) {
+            cb.setAttribute('checked', true);
+            cb.checked = true;
+          });
+        } else {
+          targetNode.removeAttribute('data-toggled');
+          targetNode.childNodes[0].innerHTML = "Select " + clickBehaviorSpecifier.text;
+          clickBehaviorSpecifier.inputsSelector().forEach(function(cb) {
+            cb.checked = false;
+          });
+        }
+      });
+    });
+  },
+
+  _initializeDeletionControls: function() {
+    document.getElementById("clean").addEventListener('click', function() {
+      var result,
+        warningText,
+        checkedBoxes = noQuery.checkboxes().filter(function(cb) {
+          return !!cb.checked;
+        }),
+        checkedLength = checkedBoxes.length;
+
+      if (checkedLength < 1) {
+        alert("You haven't selected any bookmarks to delete.");
+        return;
+      } else {
+        result = confirm(
+          ["This will delete ",
+          checkedLength,
+          " bookmark",
+          (checkedLength > 1 ? "s" : ""),
+          ". Are you sure you want to do this?"].join('')
+        );
+        if (result) {
+          checkedBoxes.forEach(function(cb) {
+            var badBookmarkValue = String(cb.getAttribute("value")),
+              node = document.getElementById(badBookmarkValue);
+            chrome.bookmarks.remove(badBookmarkValue)
+            node.parentNode.removeChild(node);
+          });
+        }
+      }
+    });
+  },
+
+  _initializeControls: function() {
+    this._initializeSelectionControls();
+    this._initializeDeletionControls();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if ( typeof(chrome.bookmarks) === "undefined" ) return [];
+  chrome.bookmarks.getTree(function(r) {
+    new View("bookmarks").draw(new Container(r));
+  });
+});
 
